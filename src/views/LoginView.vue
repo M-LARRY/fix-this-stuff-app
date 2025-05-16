@@ -5,6 +5,7 @@
         <input v-model="email" type="email" placeholder="Email" class="form-control mb-2" />
         <input v-model="password" type="password" placeholder="Password" class="form-control mb-2" />
         <button class="btn btn-primary">Login</button>
+        <p v-if="error" style="color:red">{{ error }}</p>
       </form>
     </div>
   </template>
@@ -14,17 +15,26 @@
   import { useAuthStore } from '../store/auth'
   import { useRouter } from 'vue-router'
   
+  const error = ref('');
   const email = ref('')
   const password = ref('')
   const authStore = useAuthStore()
   const router = useRouter()
+  error.value = '';
   
   const handleLogin = async () => {
     try {
       await authStore.login({ email: email.value, password: password.value })
       router.push('/')
-    } catch (e) {
-      alert('Login failed')
+    } catch (err) {
+    if (err.response?.data?.errors?.length) {
+      // Combine multiple validation messages into one string
+      error.value = err.response.data.errors.map(e => e.msg).join(', ');
+    } else if (err.response?.data?.message) {
+      error.value = err.response.data.message;
+    } else {
+      error.value = 'Login failed. Please try again.';
+    }
     }
   }
   </script>

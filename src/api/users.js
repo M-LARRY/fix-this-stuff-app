@@ -1,14 +1,14 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/auth.js';
 
-const ticketApi = axios.create({
-  baseURL: import.meta.env.VITE_TICKETS_API_URL,
+const usersApi = axios.create({
+  baseURL: import.meta.env.VITE_USERS_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-ticketApi.interceptors.request.use((config) => {
+usersApi.interceptors.request.use((config) => {
   const authStore = useAuthStore();
   if (authStore.token) {
     config.headers.Authorization = `Bearer ${authStore.token}`;
@@ -16,5 +16,4 @@ ticketApi.interceptors.request.use((config) => {
   return config;
 });
 
-export default ticketApi;
-
+export default usersApi;

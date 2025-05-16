@@ -34,8 +34,8 @@ const handleRegister = async () => {
 
   try {
     await authStore.register({
-      name: name.value,
-      surname: surname.value,
+      firstName: name.value,
+      lastName: surname.value,
       email: email.value,
       password: password.value,
     });

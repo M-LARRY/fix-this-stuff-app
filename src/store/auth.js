@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import api from '../api/auth'
+import authApi from '../api/auth'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -10,23 +10,27 @@ export const useAuthStore = defineStore('auth', {
   },
   actions: {
     async login(credentials) {
-      const response = await api.post('/login', credentials)
+      const response = await authApi.post('/login', credentials)
       this.token = response.data.token
       localStorage.setItem('token', this.token)
-      api.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
+      authApi.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
     },
     async register(credentials) {
-        const response = await api.post('/register', credentials)
-        this.token = response.data.token
-        localStorage.setItem('token', this.token)
-        api.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
+      const response = await authApi.post('/register', credentials)
+      this.token = response.data.token
+      localStorage.setItem('token', this.token)
+      autApi.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
     },
     logout() {
       this.token = null
       localStorage.removeItem('token')
-      delete api.defaults.headers.common['Authorization']
+      delete autApi.defaults.headers.common['Authorization']
       sessionStorage.setUsername(null)
       sessionStorage.setRole(null)
     },
+    async profile() {
+      const response = await authApi.get('/profile')
+
+    }
   },
 })
