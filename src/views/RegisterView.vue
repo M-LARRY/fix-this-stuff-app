@@ -14,8 +14,10 @@
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '../store/auth.js';
+import { useRouter } from 'vue-router'
 
 const authStore = useAuthStore();
+const router = useRouter()
 
 const name = ref('');
 const surname = ref('');
@@ -39,6 +41,11 @@ const handleRegister = async () => {
       email: email.value,
       password: password.value,
     });
+    await authStore.login({ 
+      email: email.value, 
+      password: password.value 
+    })
+    router.push('/')
     // Redirect or show success message
   } catch (err) {
     if (err.response?.data?.errors?.length) {
@@ -46,9 +53,10 @@ const handleRegister = async () => {
       error.value = err.response.data.errors.map(e => e.msg).join(', ');
     } else if (err.response?.data?.message) {
       error.value = err.response.data.message;
-    } else {
+    } else if (err.response?.length) {
       error.value = 'Registration failed. Please try again.';
     }
+    error.value = err
   }
 };
 </script>

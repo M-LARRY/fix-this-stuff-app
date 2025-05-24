@@ -27,14 +27,14 @@
       await authStore.login({ email: email.value, password: password.value })
       router.push('/')
     } catch (err) {
-    if (err.response?.data?.errors?.length) {
-      // Combine multiple validation messages into one string
-      error.value = err.response.data.errors.map(e => e.msg).join(', ');
-    } else if (err.response?.data?.message) {
-      error.value = err.response.data.message;
-    } else {
-      error.value = 'Login failed. Please try again.';
-    }
+      if (err.response?.data?.errors?.length) {
+        // Combine multiple validation messages into one string
+        error.value = err.response.data.errors.map(e => e.msg).join(', ');
+      } else if (err.response?.data?.message) {
+        error.value = err.response.data.message;
+      } else {
+        error.value = 'Login failed. Please try again.';
+      }
     }
   }
   </script>
