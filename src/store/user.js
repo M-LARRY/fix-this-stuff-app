@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import usersApi from '../api/users';
+import userApi from '../api/user';
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -9,12 +9,17 @@ export const useUserStore = defineStore('user', {
     error: null,
   }),
 
+  getters: {
+    getUsers: (state) => state.users,
+    getCurrentUser: (state) => state.currentUser,
+  },
+
   actions: {
     async fetchUsers() {
       this.loading = true;
       try {
-        const response = await usersApi.get('/users');
-        this.users = response.data;
+        const response = await userApi.get('/');
+        this.users = response.data.users;
       } catch (error) {
         this.error = error.message || 'Failed to fetch users.';
       } finally {
@@ -22,11 +27,11 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    async fetchUser(userId) {
+    async fetchUserById(userId) {
       this.loading = true;
       try {
-        const response = await usersApi.get(`/users/${userId}`);
-        this.currentUser = response.data;
+        const response = await userApi.get(`/${userId}`);
+        this.currentUser = response.data.user;
       } catch (error) {
         this.error = error.message || 'Failed to fetch user.';
       } finally {
@@ -36,14 +41,15 @@ export const useUserStore = defineStore('user', {
 
     async updateUser(userId, userData) {
       this.loading = true;
+      this.error = null;
       try {
-        const response = await usersApi.put(`/users/${userId}`, userData);
-        this.currentUser = response.data;
-        // Optionally update the list if needed
-        const index = this.users.findIndex(user => user.id === userId);
-        if (index !== -1) this.users[index] = response.data;
+        const url = `/${userId}`;
+        const body = userData;
+        const response = await userApi.put(url, body);
+        this.currentUser = response.data.user
       } catch (error) {
         this.error = error.message || 'Failed to update user.';
+        throw error;
       } finally {
         this.loading = false;
       }
@@ -52,7 +58,7 @@ export const useUserStore = defineStore('user', {
     async deleteUser(userId) {
       this.loading = true;
       try {
-        await usersApi.delete(`/users/${userId}`);
+        await userApi.delete(`/${userId}`);
         this.users = this.users.filter(user => user.id !== userId);
         if (this.currentUser?.id === userId) this.currentUser = null;
       } catch (error) {

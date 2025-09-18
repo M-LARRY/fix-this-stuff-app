@@ -1,14 +1,14 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/auth.js';
 
-const ticketApi = axios.create({
-  baseURL: import.meta.env.VITE_TICKET_API_URL,
+const userApi = axios.create({
+  baseURL: import.meta.env.VITE_USER_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-ticketApi.interceptors.request.use((config) => {
+userApi.interceptors.request.use((config) => {
   const authStore = useAuthStore();
   if (authStore.role) {
     config.headers['x-role'] = authStore.role;
@@ -21,5 +21,4 @@ ticketApi.interceptors.request.use((config) => {
   return Promise.reject(error);
 });
 
-export default ticketApi;
-
+export default userApi;

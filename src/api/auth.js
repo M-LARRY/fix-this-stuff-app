@@ -10,10 +10,15 @@ const authApi = axios.create({
 
 authApi.interceptors.request.use((config) => {
   const authStore = useAuthStore();
-  if (authStore.token) {
-    config.headers.Authorization = `Bearer ${authStore.token}`;
+  if (authStore.role) {
+    config.headers['x-role'] = authStore.role;
+  }
+  if (authStore.userId) {
+    config.headers['x-user'] = authStore.userId;
   }
   return config;
+}, (error) => {
+  return Promise.reject(error);
 });
 
 export default authApi;
